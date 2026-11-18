@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-surface text-on-surface font-body antialiased;
+  }
+
+  ::selection {
+    background-color: #914b34;
+    color: #fcf9f2;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+
+  /* Thin atelier scrollbar instead of the fully hidden one in the export */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #ccc5bd transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #ccc5bd;
+    border-radius: 9999px;
+  }
+
+  :focus-visible {
+    outline: 2px solid #914b34;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .material-symbols-outlined {
+    font-family: "Material Symbols Outlined", sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .atelier-input {
+    @apply w-full border border-outline-variant bg-surface-container-low px-space-sm py-2.5 font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none disabled:opacity-60;
+  }
+
+  .atelier-label {
+    @apply mb-1 block font-label-sm text-label-sm uppercase tracking-wider text-outline;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-primary px-7 py-3.5 font-label-md text-label-md uppercase tracking-widest text-on-primary transition-colors duration-300 hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 border border-primary bg-transparent px-7 py-3.5 font-label-md text-label-md uppercase tracking-widest text-on-surface transition-colors duration-300 hover:bg-surface-container-low disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .eyebrow {
+    @apply font-label-sm text-label-sm font-bold uppercase tracking-widest text-secondary;
+  }
+
+  .hairline {
+    @apply border-t border-outline-variant/70;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

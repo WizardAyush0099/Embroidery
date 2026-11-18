@@ -1,0 +1,51 @@
+/**
+ * All photography was extracted from the Google Stitch screens and is served
+ * locally from /public/images/stitch so the storefront never depends on
+ * expiring design-tool URLs.
+ */
+export const imagery = {
+  heroEspresso: "/images/stitch/s03-editorial-close-up-fashion-photograph-of-an.jpg",
+  macroGold: "/images/stitch/s04-macro-lens-extreme-close-up-of-micro.jpg",
+  ecruFlatlay: "/images/stitch/s01-close-up-editorial-flatlay-of-an-ecru.jpg",
+  modelChalkHoodie: "/images/stitch/s05-editorial-lifestyle-shot-of-a-model-wearing.jpg",
+  ecruTees: "/images/stitch/s06-high-angle-shot-of-crisp-ecru-oversized.jpg",
+  caps: "/images/stitch/s07-close-up-still-life-photograph-of-structured.jpg",
+  linenPortrait: "/images/stitch/s08-aesthetic-portrait-of-an-artisan-tailor-wearing.jpg",
+  nocturneStudio: "/images/stitch/s09-studio-catalog-shot-of-a-heavyweight-450.jpg",
+  forestCap: "/images/stitch/s12-editorial-product-photo-of-a-deep-forest.jpg",
+  studioMockup: "/images/stitch/s13-photorealistic-3d-rendering-mockup-of-an-oatmeal.jpg",
+  macroPuff: "/images/stitch/s14-extreme-macro-photography-of-raised-3d-puff.jpg",
+  spools: "/images/stitch/s15-macro-top-down-shot-of-vibrant-vintage.jpg",
+  handsHoop: "/images/stitch/s16-close-up-of-artisan-hands-holding-a.jpg",
+  galleryHoodie: "/images/stitch/s17-square-instagram-aesthetic-photograph-of-an-oversized.jpg",
+  galleryClient: "/images/stitch/s18-square-aesthetic-shot-of-a-client-holding.jpg",
+  galleryCap: "/images/stitch/s19-square-photograph-of-a-cream-structured-cap.jpg",
+  galleryMan: "/images/stitch/s20-square-outdoor-lifestyle-photo-of-a-man.jpg",
+  galleryMonogram: "/images/stitch/s21-extreme-macro-square-shot-of-custom-monogram.jpg",
+  galleryWoman: "/images/stitch/s22-square-portrait-of-a-woman-wearing-an.jpg",
+  sageFront: "/images/stitch/s23-editorial-close-up-front-angle-of-an.jpg",
+  sageMacro: "/images/stitch/s24-extreme-macro-lens-photograph-of-dense-raised.jpg",
+  sageModel: "/images/stitch/s25-fashion-editorial-portrait-of-a-model-wearing.jpg",
+  sageHanging: "/images/stitch/s28-editorial-garment-photograph-of-the-sovereign-heavyweight.jpg",
+  frenchTerry: "/images/stitch/s29-editorial-garment-photograph-of-an-archival-french.jpg",
+  blackTee: "/images/stitch/s30-editorial-photo-of-a-heavyweight-boxy-black.jpg",
+  terracottaCap: "/images/stitch/s31-product-photograph-of-a-structured-six-panel.jpg",
+  goldThread: "/images/stitch/s33-macro-close-up-photograph-of-opulent-gold.jpg",
+  goldDetail: "/images/stitch/s34-macro-detail-shot-of-dense-luxury-gold.jpg",
+  floralNeedlework: "/images/stitch/s35-close-up-photography-of-delicate-floral-needlework.jpg",
+  sculpturalRelief: "/images/stitch/s36-high-density-raised-sculptural-embroidery-relief-with.jpg",
+  macroCloseup: "/images/stitch/s38-extreme-macro-close-up-photograph-of-an.jpg",
+  artisanalMacro: "/images/stitch/s39-high-resolution-extreme-macro-photograph-of-artisanal.jpg",
+  didotMonogram: "/images/stitch/s40-macro-detail-of-crisp-didot-typeface-monogram.jpg",
+  heraldicCrest: "/images/stitch/s42-opulent-coat-of-arms-heraldic-family-crest.jpg",
+  goldFiligree: "/images/stitch/s43-macro-close-up-photograph-of-bespoke-gold.jpg",
+  highDensity: "/images/stitch/s44-macro-close-up-photograph-of-high-density.jpg",
+  fleeceMacro: "/images/stitch/s45-macro-luxury-shot-of-heavy-450-gsm.jpg",
+  charcoalPigment: "/images/stitch/s46-high-fashion-close-up-of-charcoal-pigment.jpg",
+  naturalFibers: "/images/stitch/s47-tactile-macro-still-life-of-premium-natural.jpg",
+  flaxDetail: "/images/stitch/s48-bespoke-tailoring-closeup-of-raw-belgian-flax.jpg",
+  capDetail: "/images/stitch/s49-artisanal-unstructured-six-panel-baseball-cap-in.jpg",
+  canvasBlank: "/images/stitch/s50-ultra-heavy-500-gsm-dense-canvas-cotton.jpg",
+} as const;
+
+export type ImageryKey = keyof typeof imagery;
