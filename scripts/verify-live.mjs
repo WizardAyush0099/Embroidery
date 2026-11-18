@@ -212,19 +212,18 @@ async function main() {
     `HTTP ${anonRpc.status}`,
   );
 
-  // 5. Auth providers.
+  // 5. Identity provider (Clerk owns sign-in; Supabase is database + storage only).
   console.log("\nAuth");
-  const settings = await fetch(`${URL_BASE}/auth/v1/settings`, { headers: headers(ANON) });
-  if (settings.ok) {
-    const json = await settings.json().catch(() => ({}));
-    record(
-      "Email sign-in provider enabled",
-      Boolean(json.external?.email),
-      `email: ${json.external?.email} · google: ${json.external?.google}`,
-    );
-  } else {
-    record("auth settings", false, `HTTP ${settings.status}`);
-  }
+  record(
+    "Clerk publishable key set",
+    Boolean(env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY),
+    env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? "present" : "missing — sign-in shows a setup notice",
+  );
+  record(
+    "Clerk secret key set",
+    Boolean(env.CLERK_SECRET_KEY),
+    env.CLERK_SECRET_KEY ? "present" : "missing — sessions cannot be verified on the server",
+  );
 
   // 6. Service role (server-only operations: admin writes, place_order, signed uploads).
   console.log("\nService role");

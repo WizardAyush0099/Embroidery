@@ -1,14 +1,17 @@
 "use server";
 
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { isSupabaseConfigured } from "@/lib/config";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { isClerkConfigured } from "@/lib/clerk";
 
 export async function signOut() {
-  if (isSupabaseConfigured) {
+  if (isClerkConfigured) {
     try {
-      const supabase = await createSupabaseServerClient();
-      await supabase.auth.signOut();
+      const { sessionId } = await auth();
+      if (sessionId) {
+        const client = await clerkClient();
+        await client.sessions.revokeSession(sessionId);
+      }
     } catch (error) {
       console.error("signOut failed", error);
     }

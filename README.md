@@ -7,11 +7,13 @@ depend on that folder).
 - **Storefront** — premium homepage, shop with live search/filters/sorting, product detail pages, custom
   embroidery studio, persistent cart, checkout, order confirmation/tracking, account history, about and
   contact.
-- **Admin portal** (`/admin`) — passwordless email sign-in restricted to an allow-list, live dashboard, product CRUD
+- **Admin portal** (`/admin`) — Clerk sign-in restricted to an email allow-list, live dashboard, product CRUD
   with multi-image upload to Supabase Storage, sizes/colours/stock, categories, orders, custom commission
   queue with private reference artwork, inventory and store settings.
-- **Backend** — Supabase Postgres + Auth + Storage with Row Level Security, atomic server-side checkout,
-  Razorpay payment order creation and server-side HMAC signature verification.
+- **Identity** — Clerk owns sign-in and sessions; Supabase stays the database and storage layer and is only
+  ever reached from the server with the service-role key once Clerk has identified the caller.
+- **Backend** — Supabase Postgres + Storage with Row Level Security, atomic server-side checkout, Razorpay
+  payment order creation and server-side HMAC signature verification.
 
 ## Design fidelity
 
@@ -23,7 +25,8 @@ design-tool URLs. The admin console follows the dark ops-sidebar screens.
 
 ## Stack
 
-Next.js 15 (App Router, React 19) · TypeScript · Tailwind CSS · Supabase (`@supabase/ssr`) · Razorpay REST.
+Next.js 15 (App Router, React 19) · TypeScript · Tailwind CSS · Clerk (`@clerk/nextjs`) · Supabase
+(`@supabase/ssr`) · Razorpay REST.
 The project is Vercel-ready; `next.config.mjs`, `package.json` and npm scripts are standard so existing
 GitHub/Vercel settings keep working.
 
@@ -38,11 +41,11 @@ GitHub/Vercel settings keep working.
    - Replace the placeholder in `schema.sql` (`admin_users`) — or run
      `insert into admin_users (email) values ('you@gmail.com');`
    - Add it to the `ADMIN_EMAILS` environment variable.
-4. **Email sign-in needs no third-party account.** Supabase Auth ships with the Email provider enabled: the
-   sign-in form emails a one-time link, so there is no password and no OAuth app to register. Just add your
-   origins (for example `http://localhost:3000/**` and your deployed domain) to Supabase → Authentication →
-   URL Configuration → Redirect URLs. The built-in mailer is rate limited (a handful of mails per hour); for
-   heavier use point Authentication → SMTP Settings at any free transactional mail provider.
+4. **Clerk** — the application `app_3MGaDzRbme2Ix8I6gnTkLxEhmhg` provides sign-in. Copy its publishable and
+   secret keys from the Clerk dashboard (API keys) into `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and
+   `CLERK_SECRET_KEY`. Sign-in methods (email code, password, social) are configured in the Clerk dashboard,
+   not in this repo. Without the keys the storefront still renders, but the sign-in surfaces show a setup
+   notice.
 5. **Environment variables** — copy `.env.example` to `.env.local` (locally) or add them in Vercel →
    Settings → Environment Variables. Never commit real keys.
 
@@ -52,7 +55,9 @@ GitHub/Vercel settings keep working.
    | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public anon key (RLS enforced) |
    | `SUPABASE_SERVICE_ROLE_KEY` | Server only: checkout, uploads, admin writes |
    | `ADMIN_EMAILS` | Comma-separated Gmail allow-list |
-   | `NEXT_PUBLIC_SITE_URL` | Canonical origin for auth redirects |
+   | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable key (browser) |
+   | `CLERK_SECRET_KEY` | Clerk secret key (server only) |
+   | `NEXT_PUBLIC_SITE_URL` | Canonical origin for links and Razorpay callbacks |
    | `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Razorpay key id used by Checkout.js |
    | `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | Server-side order creation + signature verification |
 
@@ -98,7 +103,7 @@ payment is ever simulated: without keys the storefront offers pay-on-delivery on
 
 ## Verification checklist
 
-1. Sign in at `/admin` with the allow-listed Gmail → dashboard loads real (empty) metrics.
+1. Sign in at `/admin` with the allow-listed email via Clerk → dashboard loads real (empty) metrics.
 2. Add a product with photography → it appears in `/shop` immediately.
 3. Add to bag, checkout → order appears in `/admin/orders` with stock decremented.
 4. Submit a custom brief with reference art in `/custom` → it appears in `/admin/requests`; open it, set

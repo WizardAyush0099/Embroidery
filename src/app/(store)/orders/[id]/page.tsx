@@ -65,7 +65,7 @@ export default async function OrderPage({
   if (!order) notFound();
   const user = await getSessionUser();
   const authorised =
-    (user && order.user_id && user.id === order.user_id) ||
+    (user?.email && order.email.toLowerCase() === user.email.toLowerCase()) ||
     (emailParam && order.email.toLowerCase() === emailParam.toLowerCase());
 
   if (!authorised) notFound();

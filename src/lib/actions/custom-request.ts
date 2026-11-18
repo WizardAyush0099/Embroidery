@@ -2,7 +2,6 @@
 
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
-import { getSessionUser } from "@/lib/auth";
 import { validateUpload } from "@/lib/storage";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -113,12 +112,10 @@ export async function submitCustomRequest(
       // No uploaded references — the brief is text-only.
     }
 
-    const user = await getSessionUser();
-
     const { data, error } = await admin
       .from("custom_requests")
       .insert({
-        user_id: user?.id ?? null,
+        user_id: null,
         customer_name: customerName,
         email,
         phone,

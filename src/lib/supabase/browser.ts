@@ -6,7 +6,11 @@ import { SUPABASE_ANON_KEY, SUPABASE_URL, isSupabaseConfigured } from "@/lib/con
 
 let browserClient: SupabaseClient | null = null;
 
-/** Returns null when the project has not been connected to Supabase yet. */
+/**
+ * Supabase is the database and storage layer, not the identity provider, so the
+ * browser client stays anonymous: it only signs upload URLs and reads public
+ * catalogue data. Auth is handled by Clerk.
+ */
 export function getBrowserSupabase(): SupabaseClient | null {
   if (!isSupabaseConfigured) return null;
   if (!browserClient) {

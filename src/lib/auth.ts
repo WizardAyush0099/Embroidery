@@ -1,47 +1,57 @@
 import "server-only";
 
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import type { User } from "@supabase/supabase-js";
-import { isAdminEmail, isSupabaseConfigured } from "@/lib/config";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { isClerkConfigured } from "@/lib/clerk";
+import { isAdminEmail } from "@/lib/config";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
-export async function getSessionUser(): Promise<User | null> {
-  if (!isSupabaseConfigured) return null;
+export type SessionUser = {
+  id: string;
+  email: string | null;
+  name: string | null;
+};
+
+/** The signed-in Clerk user, mapped to the small shape the app needs. */
+export async function getSessionUser(): Promise<SessionUser | null> {
+  if (!isClerkConfigured) return null;
   try {
-    const supabase = await createSupabaseServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    return user ?? null;
-  } catch {
+    const { userId } = await auth();
+    if (!userId) return null;
+    const user = await currentUser();
+    const email = user?.primaryEmailAddress?.emailAddress ?? user?.emailAddresses[0]?.emailAddress ?? null;
+    return {
+      id: userId,
+      email: email?.toLowerCase() ?? null,
+      name: user?.fullName ?? user?.firstName ?? null,
+    };
+  } catch (error) {
+    console.error("getSessionUser failed", error);
     return null;
   }
 }
 
 /**
  * Authorised admins are either listed in ADMIN_EMAILS or in public.admin_users.
- * Both layers are checked; RLS enforces the database list for every write.
+ * The table is read with the service-role client because the signed-in identity
+ * now lives in Clerk, not in Postgres.
  */
-export async function getAdminUser(): Promise<User | null> {
+export async function getAdminUser(): Promise<SessionUser | null> {
   const user = await getSessionUser();
   if (!user?.email) return null;
 
   if (isAdminEmail(user.email)) return user;
 
   try {
-    const supabase = await createSupabaseServerClient();
-    const { data } = await supabase
-      .from("admin_users")
-      .select("email")
-      .eq("email", user.email.toLowerCase())
-      .maybeSingle();
+    const admin = createSupabaseAdminClient();
+    const { data } = await admin.from("admin_users").select("email").eq("email", user.email).maybeSingle();
     return data ? user : null;
   } catch {
     return null;
   }
 }
 
-export async function requireAdmin(): Promise<User> {
+export async function requireAdmin(): Promise<SessionUser> {
   const user = await getSessionUser();
   if (!user) redirect("/admin/login");
   const admin = await getAdminUser();
@@ -49,6 +59,6 @@ export async function requireAdmin(): Promise<User> {
   return admin;
 }
 
-export async function requireAdminApi(): Promise<User | null> {
+export async function requireAdminApi(): Promise<SessionUser | null> {
   return getAdminUser();
 }

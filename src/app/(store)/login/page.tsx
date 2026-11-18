@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { getSessionUser } from "@/lib/auth";
-import { isSupabaseConfigured } from "@/lib/config";
+import { isClerkConfigured } from "@/lib/clerk";
 
 export const dynamic = "force-dynamic";
 
@@ -36,7 +36,7 @@ export default async function LoginPage({
       </div>
 
       <div className="mt-space-xl border border-outline-variant/70 bg-surface-container-lowest p-space-lg shadow-tactile">
-        <LoginForm configured={isSupabaseConfigured} nextPath={nextPath} />
+        <LoginForm configured={isClerkConfigured} nextPath={nextPath} />
       </div>
 
       <p className="mt-4 text-center font-body-sm text-[12px] text-on-surface-variant">

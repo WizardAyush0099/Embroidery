@@ -47,7 +47,7 @@ export default async function CheckoutPage() {
         freeShippingThreshold={settings.free_shipping_threshold}
         razorpayEnabled={isRazorpayConfigured}
         codEnabled={settings.cod_enabled}
-        defaultName={(user?.user_metadata?.full_name as string) ?? ""}
+        defaultName={user?.name ?? ""}
         defaultEmail={user?.email ?? ""}
       />
 

@@ -18,21 +18,25 @@ export default async function AccountPage() {
   const user = await getSessionUser();
   if (!user) redirect("/login?next=/account");
 
+  // The identity lives in Clerk, so records are matched on the verified email
+  // address rather than a Supabase auth id.
   const admin = createSupabaseAdminClient();
-  const [ordersRes, requestsRes] = await Promise.all([
-    admin
-      .from("orders")
-      .select("*, order_items(*)")
-      .or(`user_id.eq.${user.id},email.eq.${user.email ?? ""}`)
-      .order("created_at", { ascending: false })
-      .limit(50),
-    admin
-      .from("custom_requests")
-      .select("*")
-      .or(`user_id.eq.${user.id},email.eq.${user.email ?? ""}`)
-      .order("created_at", { ascending: false })
-      .limit(50),
-  ]);
+  const [ordersRes, requestsRes] = user.email
+    ? await Promise.all([
+        admin
+          .from("orders")
+          .select("*, order_items(*)")
+          .eq("email", user.email)
+          .order("created_at", { ascending: false })
+          .limit(50),
+        admin
+          .from("custom_requests")
+          .select("*")
+          .eq("email", user.email)
+          .order("created_at", { ascending: false })
+          .limit(50),
+      ])
+    : [{ data: [] }, { data: [] }];
 
   const orders = (ordersRes.data ?? []) as Order[];
   const requests = (requestsRes.data ?? []) as CustomRequest[];
@@ -43,7 +47,7 @@ export default async function AccountPage() {
         <div>
           <span className="eyebrow">Private client room</span>
           <h1 className="mt-1 font-display text-display-sm-mobile text-on-surface md:text-display-sm">
-            {user.user_metadata?.full_name ?? user.email?.split("@")[0] ?? "Patron"}
+            {user.name ?? user.email?.split("@")[0] ?? "Patron"}
           </h1>
           <p className="mt-1 font-body-sm text-body-sm text-on-surface-variant">{user.email}</p>
         </div>

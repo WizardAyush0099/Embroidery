@@ -1,9 +1,18 @@
-import type { NextRequest } from "next/server";
-import { updateSession } from "@/lib/supabase/middleware";
+import { clerkMiddleware } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  return updateSession(request);
-}
+/**
+ * Clerk owns the session cookie, so the middleware only has to keep it fresh.
+ * Admin authorisation is enforced in the server components (requireAdmin) and
+ * by Postgres RLS, never by the matcher alone.
+ */
+const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+
+export default clerkConfigured
+  ? clerkMiddleware()
+  : function passthrough() {
+      return NextResponse.next();
+    };
 
 export const config = {
   matcher: [

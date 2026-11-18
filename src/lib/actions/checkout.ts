@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getSessionUser } from "@/lib/auth";
 import { defaultSettings } from "@/lib/catalog";
 import { isRazorpayConfigured, razorpayKeyId } from "@/lib/config";
 import { createRazorpayOrder } from "@/lib/razorpay";
@@ -94,7 +93,6 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
 
   try {
     const admin = createSupabaseAdminClient();
-    const user = await getSessionUser();
 
     const { data, error } = await admin.rpc("place_order", {
       p_customer: {
@@ -112,7 +110,9 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
       },
       p_items: items,
       p_payment_method: paymentMethod,
-      p_user_id: user?.id ?? null,
+      // Orders are linked to a patron by verified email; the session identity
+      // now comes from Clerk rather than a Supabase auth id.
+      p_user_id: null,
       p_notes: input.notes?.trim() || null,
       p_proof_preference: input.proofPreference === "trust_artisan" ? "trust_artisan" : "digital",
     });
