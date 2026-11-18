@@ -457,7 +457,12 @@ begin
 end;
 $$;
 
-revoke all on function public.place_order(jsonb, jsonb, text, uuid, text, text) from anon, authenticated;
+-- Postgres grants EXECUTE to PUBLIC implicitly, so PUBLIC must be revoked too:
+-- otherwise any browser holding the publishable key could create orders directly.
+revoke all on function public.place_order(jsonb, jsonb, text, uuid, text, text)
+  from public, anon, authenticated;
+grant execute on function public.place_order(jsonb, jsonb, text, uuid, text, text)
+  to service_role;
 
 -- ---------------------------------------------------------------------------
 -- Storage buckets
