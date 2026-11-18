@@ -217,7 +217,11 @@ async function main() {
   const settings = await fetch(`${URL_BASE}/auth/v1/settings`, { headers: headers(ANON) });
   if (settings.ok) {
     const json = await settings.json().catch(() => ({}));
-    record("Google provider enabled", Boolean(json.external?.google), String(json.external?.google));
+    record(
+      "Email sign-in provider enabled",
+      Boolean(json.external?.email),
+      `email: ${json.external?.email} · google: ${json.external?.google}`,
+    );
   } else {
     record("auth settings", false, `HTTP ${settings.status}`);
   }

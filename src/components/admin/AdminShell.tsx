@@ -113,7 +113,7 @@ export function AdminShell({
             </button>
           </form>
           <p className="mt-3 font-label-sm text-[8px] uppercase tracking-wider text-white/25">
-            Secured by Google · RLS enforced
+            Secured by Supabase Auth · RLS enforced
           </p>
         </div>
       </aside>

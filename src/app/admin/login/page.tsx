@@ -42,7 +42,7 @@ export default async function AdminLoginPage() {
               { label: "Catalogue", value: "Live" },
               { label: "Storage", value: "Supabase" },
               { label: "Payments", value: "Razorpay" },
-              { label: "Access", value: "Google" },
+              { label: "Access", value: "Email link" },
             ].map((item) => (
               <div key={item.label}>
                 <p className="font-label-sm text-[9px] uppercase tracking-wider text-white/35">{item.label}</p>
@@ -53,7 +53,7 @@ export default async function AdminLoginPage() {
         </div>
 
         <p className="font-label-sm text-[8px] uppercase tracking-wider text-white/25">
-          Restricted access · authorised Gmail accounts only
+          Restricted access · authorised atelier email only
         </p>
       </div>
 
@@ -63,7 +63,7 @@ export default async function AdminLoginPage() {
             <span className="material-symbols-outlined text-[26px] text-secondary">lock</span>
             <h1 className="mt-2 font-display text-headline-lg text-on-surface">Atelier sign in</h1>
             <p className="mt-1 font-body-sm text-body-sm text-on-surface-variant">
-              Use the authorised Google account for this atelier.
+              Enter the authorised atelier email and we will send you a one-time sign-in link.
             </p>
           </div>
 

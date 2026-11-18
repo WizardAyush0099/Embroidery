@@ -7,7 +7,7 @@ depend on that folder).
 - **Storefront** — premium homepage, shop with live search/filters/sorting, product detail pages, custom
   embroidery studio, persistent cart, checkout, order confirmation/tracking, account history, about and
   contact.
-- **Admin portal** (`/admin`) — Google sign-in restricted to an allow-list, live dashboard, product CRUD
+- **Admin portal** (`/admin`) — passwordless email sign-in restricted to an allow-list, live dashboard, product CRUD
   with multi-image upload to Supabase Storage, sizes/colours/stock, categories, orders, custom commission
   queue with private reference artwork, inventory and store settings.
 - **Backend** — Supabase Postgres + Auth + Storage with Row Level Security, atomic server-side checkout,
@@ -38,9 +38,11 @@ GitHub/Vercel settings keep working.
    - Replace the placeholder in `schema.sql` (`admin_users`) — or run
      `insert into admin_users (email) values ('you@gmail.com');`
    - Add it to the `ADMIN_EMAILS` environment variable.
-4. **Enable Google sign-in** in Supabase → Authentication → Providers → Google (Google Cloud OAuth client)
-   and add the callback `https://<project-ref>.supabase.co/auth/v1/callback` in Google Cloud. Add your app
-   URLs to Supabase Auth → URL configuration.
+4. **Email sign-in needs no third-party account.** Supabase Auth ships with the Email provider enabled: the
+   sign-in form emails a one-time link, so there is no password and no OAuth app to register. Just add your
+   origins (for example `http://localhost:3000/**` and your deployed domain) to Supabase → Authentication →
+   URL Configuration → Redirect URLs. The built-in mailer is rate limited (a handful of mails per hour); for
+   heavier use point Authentication → SMTP Settings at any free transactional mail provider.
 5. **Environment variables** — copy `.env.example` to `.env.local` (locally) or add them in Vercel →
    Settings → Environment Variables. Never commit real keys.
 
@@ -79,7 +81,8 @@ payment is ever simulated: without keys the storefront offers pay-on-delivery on
   and writes the order + item snapshots in one transaction.
 - Reference images for commissions are stored in the private `custom-references` bucket and served to admins
   through one-hour signed URLs.
-- Admin writes use the service-role client only after `requireAdmin()` verifies the signed-in Google account.
+- Admin writes use the service-role client only after `requireAdmin()` verifies the signed-in email against
+  `ADMIN_EMAILS` / `admin_users`.
 
 ## Routes
 

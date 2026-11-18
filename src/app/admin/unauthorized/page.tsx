@@ -21,7 +21,7 @@ export default async function UnauthorizedPage() {
         <p className="mt-2 font-body-sm text-body-sm text-on-surface-variant">
           {user?.email
             ? `The account ${user.email} is signed in but is not authorised for the atelier operations portal.`
-            : "You need to sign in with the authorised Google account."}
+            : "You need to sign in with the authorised atelier email address."}
         </p>
 
         <div className="mt-space-md rounded border border-outline-variant/70 bg-surface-container-low p-space-md text-left font-body-sm text-[12px] leading-relaxed text-on-surface-variant">
@@ -36,7 +36,7 @@ export default async function UnauthorizedPage() {
             <li>
               Add the same address to the <code className="text-[11px]">ADMIN_EMAILS</code> environment variable.
             </li>
-            <li>Sign out and sign back in with that Google account.</li>
+            <li>Sign out and request a new sign-in link for that email address.</li>
           </ol>
         </div>
 
