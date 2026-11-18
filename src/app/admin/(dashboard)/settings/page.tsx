@@ -106,7 +106,7 @@ export default async function AdminSettingsPage() {
           <section className="border border-outline-variant/60 bg-surface-container-lowest p-space-md">
             <h2 className="mb-space-sm font-headline-sm text-headline-sm">Access control</h2>
             <p className="font-body-sm text-[11px] leading-relaxed text-on-surface-variant">
-              Admin access requires an email sign-in link whose address appears in{" "}
+              Admin access requires a Clerk sign-in whose address appears in{" "}
               <code className="rounded bg-surface-container px-1 py-0.5 text-[10px]">admin_users</code> or the{" "}
               <code className="rounded bg-surface-container px-1 py-0.5 text-[10px]">ADMIN_EMAILS</code>{" "}
               environment variable. Row Level Security independently enforces the same list for database
@@ -121,7 +121,7 @@ export default async function AdminSettingsPage() {
             <h2 className="mb-space-sm font-headline-sm text-headline-sm">Runbook</h2>
             <ol className="list-decimal space-y-1 pl-4 font-body-sm text-[11px] leading-relaxed text-on-surface-variant">
               <li>Run supabase/schema.sql once in the Supabase SQL editor.</li>
-              <li>Keep the Email provider enabled in Supabase Auth and allow the site URL for redirects.</li>
+              <li>Add the Clerk publishable and secret keys so sign-in works.</li>
               <li>Set ADMIN_EMAILS and insert the same address into admin_users.</li>
               <li>Add Razorpay keys as project secrets to accept online payment.</li>
               <li>Publish products — the storefront reads the database on every request.</li>
