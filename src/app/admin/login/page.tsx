@@ -58,7 +58,7 @@ export default async function AdminLoginPage() {
       </div>
 
       <div className="flex items-center justify-center bg-surface px-margin-mobile py-space-xl">
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-md">
           <div className="text-center lg:text-left">
             <span className="material-symbols-outlined text-[26px] text-secondary">lock</span>
             <h1 className="mt-2 font-display text-headline-lg text-on-surface">Atelier sign in</h1>
@@ -67,7 +67,7 @@ export default async function AdminLoginPage() {
             </p>
           </div>
 
-          <div className="mt-space-lg border border-outline-variant/70 bg-surface-container-lowest p-space-lg shadow-tactile">
+          <div className="mt-space-lg overflow-hidden border border-outline-variant/70 bg-surface-container-lowest p-space-lg shadow-tactile">
             <LoginForm configured={isClerkConfigured} nextPath="/admin" />
           </div>
 

@@ -24,7 +24,7 @@ export default async function LoginPage({
   if (user) redirect(nextPath);
 
   return (
-    <div className="mx-auto w-full max-w-md px-margin-mobile py-space-2xl md:px-0">
+    <div className="mx-auto w-full max-w-lg overflow-hidden px-margin-mobile py-space-2xl md:px-0">
       <div className="text-center">
         <span className="material-symbols-outlined text-[30px] text-secondary">flare</span>
         <h1 className="mt-2 font-display text-display-sm-mobile text-on-surface md:text-display-sm">

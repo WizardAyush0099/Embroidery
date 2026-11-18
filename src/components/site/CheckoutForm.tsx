@@ -207,8 +207,8 @@ export function CheckoutForm({
               <input required value={form.name} onChange={(event) => update("name", event.target.value)} className="atelier-input" autoComplete="name" />
             </label>
             <label>
-              <span className="atelier-label">Email</span>
-              <input required type="email" value={form.email} onChange={(event) => update("email", event.target.value)} className="atelier-input" autoComplete="email" />
+              <span className="atelier-label">Email · account</span>
+              <input required readOnly type="email" value={form.email} className="atelier-input bg-surface-container" autoComplete="email" />
             </label>
             <label>
               <span className="atelier-label">Mobile with +91</span>

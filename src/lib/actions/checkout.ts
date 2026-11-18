@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getSessionUser } from "@/lib/auth";
 import { defaultSettings } from "@/lib/catalog";
 import { isRazorpayConfigured, razorpayKeyId } from "@/lib/config";
 import { createRazorpayOrder } from "@/lib/razorpay";
@@ -60,8 +61,15 @@ function friendlyError(message: string) {
 }
 
 export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> {
+  // The order is only ever placed for the signed-in patron; the form's email
+  // field is never trusted as the buyer's identity.
+  const session = await getSessionUser();
+  if (!session?.email) {
+    return { ok: false, error: "Please sign in to place your order." };
+  }
+
   const name = input.name?.trim();
-  const email = input.email?.trim().toLowerCase();
+  const email = session.email;
   const phone = input.phone?.trim();
 
   if (!name || name.length < 2) return { ok: false, error: "Please enter your full name." };

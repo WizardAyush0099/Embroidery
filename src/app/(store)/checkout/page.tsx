@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { CheckoutForm } from "@/components/site/CheckoutForm";
 import { getSessionUser } from "@/lib/auth";
 import { getStoreSettings } from "@/lib/catalog";
@@ -13,6 +14,10 @@ export const metadata: Metadata = {
 
 export default async function CheckoutPage() {
   const [settings, user] = await Promise.all([getStoreSettings(), getSessionUser()]);
+
+  // Buying requires a signed-in patron, so an anonymous visit is sent to the
+  // sign-in page and returned straight to the checkout afterwards.
+  if (!user) redirect("/login?next=/checkout");
 
   return (
     <div className="mx-auto w-full max-w-[1440px] px-margin-mobile py-space-xl md:px-margin-tablet lg:px-margin">
