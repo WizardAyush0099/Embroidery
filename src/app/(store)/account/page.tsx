@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signOut } from "@/lib/actions/auth";
-import { getSessionUser } from "@/lib/auth";
+import { getAdminUser, getSessionUser } from "@/lib/auth";
 import { formatDate, formatINR, orderStatusLabels, requestStatusLabels, statusTone } from "@/lib/format";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { CustomRequest, Order } from "@/lib/types";
@@ -20,16 +20,17 @@ export default async function AccountPage() {
 
   // The identity lives in Clerk, so records are matched on the verified email
   // address rather than a Supabase auth id.
-  const admin = createSupabaseAdminClient();
+  const supabase = createSupabaseAdminClient();
+  const adminUser = await getAdminUser();
   const [ordersRes, requestsRes] = user.email
     ? await Promise.all([
-        admin
+        supabase
           .from("orders")
           .select("*, order_items(*)")
           .eq("email", user.email)
           .order("created_at", { ascending: false })
           .limit(50),
-        admin
+        supabase
           .from("custom_requests")
           .select("*")
           .eq("email", user.email)
@@ -57,6 +58,26 @@ export default async function AccountPage() {
           </button>
         </form>
       </div>
+
+      {adminUser ? (
+        <Link
+          href="/admin"
+          className="mb-space-xl flex flex-col justify-between gap-3 border border-outline-variant/70 bg-surface-container-lowest px-space-md py-space-sm shadow-tactile transition-colors hover:border-primary sm:flex-row sm:items-center"
+        >
+          <span className="flex items-center gap-2.5">
+            <span className="material-symbols-outlined text-[20px] text-secondary">space_dashboard</span>
+            <span>
+              <span className="block font-label-md text-label-md uppercase tracking-wider">Atelier operations</span>
+              <span className="block font-body-sm text-[12px] text-on-surface-variant">
+                This account has admin access to the catalogue, orders and commission queue.
+              </span>
+            </span>
+          </span>
+          <span className="font-label-sm text-[10px] uppercase tracking-widest text-secondary underline underline-offset-4">
+            Open the portal
+          </span>
+        </Link>
+      ) : null}
 
       <section>
         <div className="mb-space-md flex items-end justify-between">

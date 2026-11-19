@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/auth/LoginForm";
-import { getSessionUser } from "@/lib/auth";
+import { getAdminUser, getSessionUser } from "@/lib/auth";
 import { isClerkConfigured } from "@/lib/clerk";
 
 export const dynamic = "force-dynamic";
@@ -19,9 +19,15 @@ export default async function LoginPage({
 }) {
   const { next } = await searchParams;
   const user = await getSessionUser();
-  const nextPath = next?.startsWith("/") ? next : "/account";
+  const requestedNext = next?.startsWith("/") ? next : null;
+  const nextPath = requestedNext ?? "/account";
 
-  if (user) redirect(nextPath);
+  if (user) {
+    // The atelier account lands in the operations portal by default; everyone
+    // else continues to the private client room.
+    if (!requestedNext && (await getAdminUser())) redirect("/admin");
+    redirect(nextPath);
+  }
 
   return (
     <div className="mx-auto w-full max-w-lg overflow-hidden px-margin-mobile py-space-2xl md:px-0">
