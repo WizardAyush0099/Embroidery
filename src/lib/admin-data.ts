@@ -10,7 +10,7 @@ import type {
   Product,
   StoreSettings,
 } from "@/lib/types";
-import { normaliseProduct } from "@/lib/catalog";
+import { normaliseProduct, sortProductsForDisplay } from "@/lib/catalog";
 
 export async function adminProducts(options: { search?: string; status?: string } = {}) {
   const admin = createSupabaseAdminClient();
@@ -31,7 +31,7 @@ export async function adminProducts(options: { search?: string; status?: string 
     console.error("adminProducts failed", error);
     return [] as Product[];
   }
-  return (data ?? []).map(normaliseProduct);
+  return sortProductsForDisplay((data ?? []).map(normaliseProduct));
 }
 
 export async function adminProduct(id: string): Promise<Product | null> {

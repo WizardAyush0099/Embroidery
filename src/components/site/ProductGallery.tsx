@@ -77,6 +77,12 @@ export function ProductGallery({
             )}
           </div>
 
+          {gallery.length > 1 && (
+            <div className="pointer-events-none absolute bottom-3 left-3 rounded bg-surface-container-lowest/90 px-2 py-1 font-label-sm text-[9px] uppercase tracking-widest tabular-nums text-on-surface backdrop-blur-sm">
+              {active + 1} / {gallery.length} photographs
+            </div>
+          )}
+
           <div className="pointer-events-none absolute bottom-3 right-3 flex items-center gap-1.5 rounded bg-primary px-2.5 py-1.5 text-on-primary">
             <span className="material-symbols-outlined text-[14px]">zoom_in</span>
             <span className="font-label-sm text-[9px] uppercase tracking-widest">Hover to inspect thread</span>

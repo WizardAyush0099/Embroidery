@@ -67,6 +67,9 @@ create table if not exists public.products (
   colors jsonb not null default '[]'::jsonb, -- [{ "name": "Washed Noir", "hex": "#202020" }]
   size_stock jsonb not null default '{}'::jsonb, -- { "S": 4, "M": 8 }
   stock integer not null default 0,
+  -- Lower numbers appear first. 0 means "unspecified", so new garments sort
+  -- above numbered ones by recency until the atelier pins an order.
+  sort_order integer not null default 0,
   is_featured boolean not null default false,
   is_new_arrival boolean not null default false,
   is_published boolean not null default true,
@@ -75,7 +78,11 @@ create table if not exists public.products (
   updated_at timestamptz not null default now()
 );
 
+-- Idempotent for projects created before display ordering existed.
+alter table public.products add column if not exists sort_order integer not null default 0;
+
 create index if not exists products_category_idx on public.products (category_id);
+create index if not exists products_sort_idx on public.products (sort_order, created_at desc);
 create index if not exists products_published_idx on public.products (is_published);
 create index if not exists products_featured_idx on public.products (is_featured);
 
@@ -482,14 +489,12 @@ drop policy if exists "product images are public" on storage.objects;
 create policy "product images are public" on storage.objects
   for select using (bucket_id = 'product-images');
 
+-- Writes are intentionally NOT granted to anon/authenticated here. Identity
+-- lives in Clerk, so public.is_admin() (which reads auth.uid()) can never match
+-- a storefront session; admin photography is uploaded by /api/admin/uploads
+-- using the service role after a Clerk admin check.
 drop policy if exists "admins manage product images" on storage.objects;
-create policy "admins manage product images" on storage.objects
-  for all using (bucket_id = 'product-images' and public.is_admin())
-  with check (bucket_id = 'product-images' and public.is_admin());
-
 drop policy if exists "admins read custom references" on storage.objects;
-create policy "admins read custom references" on storage.objects
-  for select using (bucket_id = 'custom-references' and public.is_admin());
 
 -- ---------------------------------------------------------------------------
 -- Privileges (RLS still restricts every row)

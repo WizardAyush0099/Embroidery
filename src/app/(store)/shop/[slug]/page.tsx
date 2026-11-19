@@ -50,9 +50,31 @@ export default async function ProductPage({ params }: { params: Params }) {
   if (!product) notFound();
 
   const related = await getRelatedProducts(product.category_id, product.id, 3);
+  const productUrl = `/shop/${product.slug}`;
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description ?? undefined,
+    image: product.images,
+    sku: product.id,
+    brand: { "@type": "Brand", name: "Atelier Brodé" },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "INR",
+      price: product.price,
+      availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      url: productUrl,
+    },
+  };
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        // Product structured data for search results; static, atelier-authored values.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <div className="mx-auto w-full max-w-[1440px] px-margin-mobile pt-space-md md:px-margin-tablet lg:px-margin">
         <nav className="flex flex-wrap items-center gap-2 font-label-sm text-[10px] uppercase tracking-widest text-outline">
           <Link href="/" className="hover:text-on-surface">
@@ -86,7 +108,7 @@ export default async function ProductPage({ params }: { params: Params }) {
             />
             <p className="mt-space-sm flex items-center gap-2 font-label-sm text-[10px] uppercase tracking-widest text-outline">
               <span className="material-symbols-outlined text-[15px] text-secondary">verified</span>
-              Photographed in natural atelier light · Colour may vary on screen
+              {product.images.length} atelier photograph{product.images.length === 1 ? "" : "s"} · Colour may vary on screen
             </p>
           </div>
 

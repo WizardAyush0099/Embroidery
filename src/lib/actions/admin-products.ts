@@ -38,6 +38,16 @@ function numberOrNull(value: FormDataEntryValue | null) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+/** True when Postgres rejected the write because sort_order does not exist yet. */
+function missingSortOrderColumn(error: { code?: string; message?: string } | null) {
+  if (!error) return false;
+  return (
+    error.code === "PGRST204" ||
+    error.code === "42703" ||
+    /sort_order/i.test(error.message ?? "")
+  );
+}
+
 export async function saveProduct(
   _prevState: ProductFormState,
   formData: FormData,
@@ -52,6 +62,7 @@ export async function saveProduct(
   const stitchCount = numberOrNull(formData.get("stitch_count"));
   const price = numberOrNull(formData.get("price"));
   const compareAtPrice = numberOrNull(formData.get("compare_at_price"));
+  const sortOrder = Math.trunc(numberOrNull(formData.get("sort_order")) ?? 0);
   const categoryId = String(formData.get("category_id") ?? "").trim();
   const images = parseJsonArray<string>(formData.get("images"), []).filter(Boolean).slice(0, 10);
   const sizes = parseJsonArray<string>(formData.get("sizes"), []).filter(Boolean).slice(0, 12);
@@ -112,19 +123,27 @@ export async function saveProduct(
       colors,
       size_stock: sizeStock,
       stock,
+      sort_order: sortOrder,
       is_featured: formData.get("is_featured") === "on",
       is_new_arrival: formData.get("is_new_arrival") === "on",
       is_published: formData.get("is_published") === "on",
       is_customisable: formData.get("is_customisable") === "on",
     };
 
-    if (id) {
-      const { error } = await admin.from("products").update(payload).eq("id", id);
-      if (error) throw error;
-    } else {
-      const { error } = await admin.from("products").insert(payload);
-      if (error) throw error;
+    const write = async (values: Record<string, unknown>) =>
+      id
+        ? admin.from("products").update(values).eq("id", id)
+        : admin.from("products").insert(values);
+
+    let { error } = await write(payload);
+    if (missingSortOrderColumn(error)) {
+      // The display-order migration has not been applied to this project yet;
+      // save everything else rather than losing the atelier's work.
+      const fallback: Record<string, unknown> = { ...payload };
+      delete fallback.sort_order;
+      ({ error } = await write(fallback));
     }
+    if (error) throw error;
 
     revalidatePath("/");
     revalidatePath("/shop");
@@ -142,6 +161,34 @@ export async function saveProduct(
   }
 
   redirect(`/admin/products?saved=${encodeURIComponent(name)}`);
+}
+
+/** Inline catalogue ordering from the admin product list. */
+export async function updateProductOrder(formData: FormData) {
+  await requireAdmin();
+
+  const id = String(formData.get("id") ?? "").trim();
+  const raw = String(formData.get("sort_order") ?? "").trim();
+  if (!id || raw === "") return;
+
+  const value = Number(raw);
+  if (!Number.isFinite(value)) return;
+
+  const admin = createSupabaseAdminClient();
+  let { error } = await admin
+    .from("products")
+    .update({ sort_order: Math.trunc(value) })
+    .eq("id", id);
+
+  if (missingSortOrderColumn(error)) {
+    console.error("updateProductOrder: run supabase/migrations/20261119_product_display_order.sql");
+    error = null;
+  }
+  if (error) console.error("updateProductOrder failed", error);
+
+  revalidatePath("/");
+  revalidatePath("/shop");
+  revalidatePath("/admin/products");
 }
 
 export async function deleteProduct(formData: FormData) {

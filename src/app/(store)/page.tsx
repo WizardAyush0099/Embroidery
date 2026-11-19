@@ -126,7 +126,7 @@ export default async function HomePage() {
                   <span className="font-label-sm text-[9px] uppercase tracking-widest text-on-surface">
                     {hero?.stitch_count
                       ? `${hero.stitch_count.toLocaleString("en-IN")} high-density stitches`
-                      : "18,500 high-density satin stitches"}
+                      : "Hand-guided needlework · Mumbai atelier"}
                   </span>
                 </div>
                 <div className="rounded bg-surface-container-lowest/90 px-3 py-1.5 shadow-sm">
@@ -146,12 +146,12 @@ export default async function HomePage() {
                         {hero.name}
                       </Link>
                     ) : (
-                      "The Sculptural Espresso Hoodie"
+                      "Bespoke commissions open"
                     )}
                   </h2>
                 </div>
                 <span className="whitespace-nowrap font-body-lg text-body-lg font-semibold text-on-surface">
-                  {hero ? formatINR(hero.price) : "Bespoke"}
+                  {hero ? formatINR(hero.price) : "By quotation"}
                 </span>
               </div>
             </div>

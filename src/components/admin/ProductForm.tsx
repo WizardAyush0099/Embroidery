@@ -279,7 +279,9 @@ export function ProductForm({
             )}
           </label>
           <p className="mt-2 font-body-sm text-[11px] text-outline">
-            Prices are inclusive of GST and shown in INR across the storefront.
+            Prices are inclusive of GST and shown in INR across the storefront. When the original price is
+            higher than the selling price, the storefront prints the discount amount and percentage
+            automatically.
           </p>
         </section>
 
@@ -298,6 +300,21 @@ export function ProductForm({
               </label>
             ))}
           </div>
+
+          <label className="mt-space-sm block border-t border-outline-variant/60 pt-space-sm">
+            <span className="atelier-label">Display order</span>
+            <input
+              name="sort_order"
+              type="number"
+              step={1}
+              defaultValue={initial?.sort_order ?? 0}
+              className="atelier-input"
+            />
+            <span className="mt-1 block font-body-sm text-[11px] text-outline">
+              Lower numbers appear first — 1, 2, 3… pins the catalogue order. Leave 0 for new garments so
+              they sit on top until you number them.
+            </span>
+          </label>
         </section>
 
         {state.status === "error" && state.message && (

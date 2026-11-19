@@ -19,6 +19,8 @@ export type Product = {
   colors: ProductColor[];
   size_stock: Record<string, number>;
   stock: number;
+  /** Lower numbers appear first; 0 means unspecified (newest first). */
+  sort_order: number;
   is_featured: boolean;
   is_new_arrival: boolean;
   is_published: boolean;

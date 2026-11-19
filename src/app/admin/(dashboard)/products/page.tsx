@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { toggleProductFlag } from "@/lib/actions/admin-products";
+import { toggleProductFlag, updateProductOrder } from "@/lib/actions/admin-products";
 import { adminProducts } from "@/lib/admin-data";
 import { formatINR } from "@/lib/format";
 
@@ -101,10 +101,10 @@ export default async function AdminProductsPage({
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[820px] border-collapse">
+            <table className="w-full min-w-[900px] border-collapse">
               <thead>
                 <tr className="border-b border-outline-variant/60 text-left">
-                  {["Garment", "Category", "Price", "Stock", "Visibility", "Flags", ""].map((heading) => (
+                  {["Order", "Garment", "Category", "Price", "Stock", "Visibility", "Flags", ""].map((heading) => (
                     <th key={heading} className="px-space-sm py-2.5 font-label-sm text-[8px] uppercase tracking-widest text-outline">
                       {heading}
                     </th>
@@ -114,6 +114,29 @@ export default async function AdminProductsPage({
               <tbody>
                 {products.map((product) => (
                   <tr key={product.id} className="border-b border-outline-variant/40 last:border-0 hover:bg-surface-container-low">
+                    <td className="px-space-sm py-2.5">
+                      <form action={updateProductOrder} className="flex items-center gap-1">
+                        <input type="hidden" name="id" value={product.id} />
+                        <input
+                          name="sort_order"
+                          type="number"
+                          step={1}
+                          defaultValue={product.sort_order ?? 0}
+                          aria-label={`Display order for ${product.name}`}
+                          className="w-14 border border-outline-variant bg-surface-container-lowest px-1.5 py-1 font-body-sm text-[12px] tabular-nums outline-none focus:border-primary"
+                        />
+                        <button
+                          type="submit"
+                          className="material-symbols-outlined text-[17px] text-outline hover:text-secondary"
+                          aria-label={`Save display order for ${product.name}`}
+                        >
+                          check
+                        </button>
+                      </form>
+                      <span className="mt-1 block font-label-sm text-[8px] uppercase tracking-wider text-outline">
+                        lower first
+                      </span>
+                    </td>
                     <td className="px-space-sm py-2.5">
                       <div className="flex items-center gap-2.5">
                         <div className="relative h-14 w-11 shrink-0 overflow-hidden bg-surface-container">

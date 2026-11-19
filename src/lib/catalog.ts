@@ -34,6 +34,19 @@ function safeSearchTerm(value: string) {
   return value.replace(/[,()%*]/g, " ").trim();
 }
 
+/**
+ * The atelier's own ordering: an explicit display number wins, and garments
+ * sharing a number fall back to newest-first. Sorting in memory keeps the
+ * storefront working even if the sort_order migration has not been applied yet.
+ */
+export function sortProductsForDisplay(products: Product[]): Product[] {
+  return [...products].sort((a, b) => {
+    const byOrder = (a.sort_order ?? 0) - (b.sort_order ?? 0);
+    if (byOrder !== 0) return byOrder;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
+}
+
 export function normaliseProduct(row: Record<string, unknown>): Product {
   const category = row.categories as Product["categories"] | null;
   return {
@@ -45,6 +58,7 @@ export function normaliseProduct(row: Record<string, unknown>): Product {
     colors: Array.isArray(row.colors) ? (row.colors as Product["colors"]) : [],
     size_stock: (row.size_stock as Record<string, number>) ?? {},
     stock: Number(row.stock ?? 0),
+    sort_order: Number(row.sort_order ?? 0),
     is_featured: Boolean(row.is_featured),
     is_new_arrival: Boolean(row.is_new_arrival),
     is_published: Boolean(row.is_published),
@@ -106,14 +120,15 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
         query = query.order("name", { ascending: true });
         break;
       default:
-        query = query
-          .order("is_featured", { ascending: false })
-          .order("created_at", { ascending: false });
+        // Narrow the page to the most recent rows first; the atelier's own
+        // display numbers are then applied in memory below.
+        query = query.order("created_at", { ascending: false });
     }
 
     const { data, error } = await query.limit(120);
     if (error) throw error;
-    return (data ?? []).map(normaliseProduct);
+    const products = (data ?? []).map(normaliseProduct);
+    return !filters.sort || filters.sort === "featured" ? sortProductsForDisplay(products) : products;
   } catch (error) {
     console.error("getProducts failed", error);
     return [];
@@ -148,9 +163,9 @@ export async function getFeaturedProducts(limit = 4): Promise<Product[]> {
       .eq("is_published", true)
       .eq("is_featured", true)
       .order("created_at", { ascending: false })
-      .limit(limit);
+      .limit(Math.max(limit * 4, 24));
     if (error) throw error;
-    return (data ?? []).map(normaliseProduct);
+    return sortProductsForDisplay((data ?? []).map(normaliseProduct)).slice(0, limit);
   } catch (error) {
     console.error("getFeaturedProducts failed", error);
     return [];
@@ -167,9 +182,9 @@ export async function getNewArrivals(limit = 4): Promise<Product[]> {
       .eq("is_published", true)
       .eq("is_new_arrival", true)
       .order("created_at", { ascending: false })
-      .limit(limit);
+      .limit(Math.max(limit * 4, 24));
     if (error) throw error;
-    return (data ?? []).map(normaliseProduct);
+    return sortProductsForDisplay((data ?? []).map(normaliseProduct)).slice(0, limit);
   } catch (error) {
     console.error("getNewArrivals failed", error);
     return [];
@@ -189,13 +204,14 @@ export async function getRelatedProducts(
       .select("*, categories(name, slug)")
       .eq("is_published", true)
       .neq("id", excludeId)
-      .limit(limit);
+      .order("created_at", { ascending: false })
+      .limit(Math.max(limit * 3, 12));
 
     if (categoryId) query = query.eq("category_id", categoryId);
 
     const { data, error } = await query;
     if (error) throw error;
-    return (data ?? []).map(normaliseProduct);
+    return sortProductsForDisplay((data ?? []).map(normaliseProduct)).slice(0, limit);
   } catch (error) {
     console.error("getRelatedProducts failed", error);
     return [];
