@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { BrandMark } from "@/components/site/BrandMark";
 import { ProductCard } from "@/components/site/ProductCard";
 import { StudioTeaser } from "@/components/site/StudioTeaser";
 import {
@@ -7,8 +8,9 @@ import {
   getCategoryCounts,
   getFeaturedProducts,
   getNewArrivals,
-  getProducts,
+  getProductCount,
 } from "@/lib/catalog";
+import { STUDIO_PHONE_DISPLAY, studioWhatsAppUrl } from "@/lib/contact";
 import { formatINR } from "@/lib/format";
 import { imagery } from "@/lib/imagery";
 import { firstImage } from "@/lib/utils";
@@ -39,12 +41,12 @@ const gallery = [
 ];
 
 export default async function HomePage() {
-  const [featured, newArrivals, categories, counts, allProducts] = await Promise.all([
+  const [featured, newArrivals, categories, counts, productCount] = await Promise.all([
     getFeaturedProducts(4),
     getNewArrivals(4),
     getCategories(),
     getCategoryCounts(),
-    getProducts(),
+    getProductCount(),
   ]);
 
   const hero = featured[0] ?? newArrivals[0] ?? null;
@@ -266,7 +268,7 @@ export default async function HomePage() {
               href="/shop"
               className="font-label-md text-label-md uppercase tracking-wider text-on-surface underline decoration-secondary decoration-1 underline-offset-4 transition-colors hover:text-secondary"
             >
-              View all garments{allProducts.length > 0 ? ` (${allProducts.length})` : ""}
+              View all garments{productCount > 0 ? ` (${productCount})` : ""}
             </Link>
           </div>
 
@@ -556,7 +558,7 @@ export default async function HomePage() {
       {/* Commission CTA */}
       <section className="w-full bg-surface px-margin-mobile py-space-2xl text-center md:px-margin-tablet lg:px-margin">
         <div className="mx-auto max-w-2xl">
-          <span className="material-symbols-outlined text-[28px] text-secondary">flare</span>
+          <BrandMark className="mx-auto h-11 w-11 text-on-surface" accentClassName="text-secondary" />
           <h2 className="mt-2 font-display text-display-sm-mobile text-on-surface md:text-display-sm">
             Commission Your Piece
           </h2>
@@ -572,6 +574,17 @@ export default async function HomePage() {
               Speak to the concierge
             </Link>
           </div>
+          <p className="mt-4 font-body-sm text-body-sm text-on-surface-variant">
+            Prefer to talk it through? WhatsApp the studio on{" "}
+            <a
+              href={studioWhatsAppUrl()}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="font-semibold text-secondary underline underline-offset-4"
+            >
+              {STUDIO_PHONE_DISPLAY}
+            </a>
+          </p>
         </div>
       </section>
     </>

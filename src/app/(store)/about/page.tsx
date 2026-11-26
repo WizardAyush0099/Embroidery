@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { BrandMark } from "@/components/site/BrandMark";
 import { getStoreSettings } from "@/lib/catalog";
 import { imagery } from "@/lib/imagery";
 
@@ -165,7 +166,7 @@ export default async function AboutPage() {
 
       <section className="mx-auto w-full max-w-[1440px] px-margin-mobile py-space-2xl text-center md:px-margin-tablet lg:px-margin">
         <div className="mx-auto max-w-2xl">
-          <span className="material-symbols-outlined text-[28px] text-secondary">flare</span>
+          <BrandMark className="mx-auto block h-11 w-11 text-on-surface" accentClassName="text-secondary" />
           <h2 className="mt-2 font-display text-display-sm-mobile text-on-surface md:text-display-sm">
             Commission your piece
           </h2>

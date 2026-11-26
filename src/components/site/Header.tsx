@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useCart } from "@/components/cart/CartProvider";
+import { AccountMenu } from "@/components/site/AccountMenu";
+import { BrandMark } from "@/components/site/BrandMark";
 import { cn } from "@/lib/utils";
 import type { Category } from "@/lib/types";
 
@@ -18,10 +20,12 @@ export function Header({
   announcement,
   brandName,
   categories,
+  clerkEnabled,
 }: {
   announcement: string | null;
   brandName: string;
   categories: Category[];
+  clerkEnabled: boolean;
 }) {
   const { count, hydrated } = useCart();
   const pathname = usePathname();
@@ -65,7 +69,7 @@ export function Header({
         </p>
       </div>
 
-      <div className="border-b border-outline-variant/70 bg-surface/95 backdrop-blur-md">
+      <div className="border-b border-outline-variant/70 bg-surface">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-margin-mobile py-4 md:px-margin-tablet lg:px-margin">
           <div className="flex items-center gap-3">
             <button
@@ -78,9 +82,10 @@ export function Header({
               {menuOpen ? "close" : "menu"}
             </button>
             <Link href="/" className="group flex items-center gap-2.5" aria-label={`${brandName} home`}>
-              <span className="material-symbols-outlined text-[26px] text-secondary transition-transform duration-500 group-hover:rotate-45">
-                flare
-              </span>
+              <BrandMark
+                className="h-8 w-8 text-on-surface transition-transform duration-500 ease-atelier group-hover:scale-105"
+                accentClassName="text-secondary"
+              />
               <span className="font-display text-[19px] uppercase leading-none tracking-[0.16em] text-on-surface md:text-[22px]">
                 {firstWord}
                 {rest.length > 0 && (
@@ -142,13 +147,17 @@ export function Header({
             >
               search
             </button>
-            <Link
-              href="/account"
-              aria-label="Account"
-              className="material-symbols-outlined hidden p-2 text-[21px] text-on-surface transition-colors hover:text-secondary sm:block"
-            >
-              person
-            </Link>
+            {clerkEnabled ? (
+              <AccountMenu />
+            ) : (
+              <Link
+                href="/account"
+                aria-label="Account"
+                className="material-symbols-outlined p-2 text-[21px] text-on-surface transition-colors hover:text-secondary"
+              >
+                person
+              </Link>
+            )}
             <Link
               href="/cart"
               aria-label={`Shopping bag, ${count} items`}
@@ -217,9 +226,13 @@ export function Header({
                 {link.label}
               </Link>
             ))}
-            <Link href="/account" className="font-label-md text-label-md uppercase tracking-widest text-on-surface">
-              My Account
-            </Link>
+            {clerkEnabled ? (
+              <AccountMenu variant="list" />
+            ) : (
+              <Link href="/account" className="font-label-md text-label-md uppercase tracking-widest text-on-surface">
+                My Account
+              </Link>
+            )}
           </div>
         </div>
       )}

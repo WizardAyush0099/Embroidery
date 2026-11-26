@@ -40,6 +40,12 @@ const nextConfig = {
       // Custom embroidery requests and product galleries can carry several images.
       bodySizeLimit: "25mb",
     },
+    // Keep recently visited pages in the client router cache so moving back and
+    // forth through the storefront is instant instead of a fresh server round trip.
+    staleTimes: {
+      dynamic: 30,
+      static: 180,
+    },
   },
 };
 

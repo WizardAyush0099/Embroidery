@@ -8,6 +8,7 @@ import {
   submitCustomRequest,
   type CustomRequestState,
 } from "@/lib/actions/custom-request";
+import { STUDIO_PHONE_DISPLAY, studioWhatsAppUrl } from "@/lib/contact";
 import { formatINR } from "@/lib/format";
 import { getBrowserSupabase } from "@/lib/supabase/browser";
 import type { Product } from "@/lib/types";
@@ -544,6 +545,17 @@ export function CustomStudio({
           </button>
           <p className="mt-2 text-center font-label-sm text-[9px] uppercase tracking-wider text-outline">
             Reply within 1–2 working days · No obligation to proceed
+          </p>
+          <p className="mt-3 text-center font-body-sm text-[12px] text-on-surface-variant">
+            Rather send a photo?{" "}
+            <a
+              href={studioWhatsAppUrl()}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="font-semibold text-secondary underline underline-offset-4"
+            >
+              WhatsApp {STUDIO_PHONE_DISPLAY}
+            </a>
           </p>
         </section>
       </div>

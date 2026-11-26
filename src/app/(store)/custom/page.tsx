@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CustomStudio } from "@/components/site/CustomStudio";
 import { getCustomisableProducts, getProducts, getStoreSettings } from "@/lib/catalog";
+import { STUDIO_PHONE_DISPLAY, STUDIO_PHONE_TEL, studioWhatsAppUrl } from "@/lib/contact";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +62,46 @@ export default async function CustomPage({
             Choose your garment, placement, thread and typography. Submit artwork or a written brief and our
             master digitizer will return a macro proof with a quotation — no payment until you approve.
           </p>
+        </div>
+
+        <div className="mb-space-lg flex flex-col items-start justify-between gap-space-md border border-outline-variant/70 bg-surface-container-lowest p-space-md shadow-tactile sm:flex-row sm:items-center">
+          <div className="flex items-start gap-space-sm">
+            <span className="material-symbols-outlined flex h-10 w-10 shrink-0 items-center justify-center rounded bg-[#f6e7e0] text-[20px] text-secondary">
+              chat
+            </span>
+            <div>
+              <p className="font-label-md text-label-md uppercase tracking-widest text-on-surface">
+                Starting a project? Talk to the studio first
+              </p>
+              <p className="mt-1 font-body-sm text-body-sm text-on-surface-variant">
+                Send a reference photo or voice note on WhatsApp and a master digitizer replies with
+                guidance before you fill in the brief.
+              </p>
+              <p className="mt-1 font-body-sm text-body-sm text-on-surface">
+                <a
+                  href={studioWhatsAppUrl()}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="font-semibold text-secondary underline underline-offset-4"
+                >
+                  WhatsApp {STUDIO_PHONE_DISPLAY}
+                </a>
+                <span className="mx-2 text-outline-variant">·</span>
+                <a href={`tel:${STUDIO_PHONE_TEL}`} className="text-on-surface-variant underline underline-offset-4">
+                  Call {STUDIO_PHONE_DISPLAY}
+                </a>
+              </p>
+            </div>
+          </div>
+          <a
+            href={studioWhatsAppUrl("Hello Atelier Brodé, I would like to start a bespoke project. Here is my reference:")}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="btn-primary shrink-0 py-3"
+          >
+            <span className="material-symbols-outlined text-[18px]">chat</span>
+            Chat on WhatsApp
+          </a>
         </div>
 
         <CustomStudio

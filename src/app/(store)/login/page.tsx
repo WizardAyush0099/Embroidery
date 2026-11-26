@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { BrandMark } from "@/components/site/BrandMark";
 import { getAdminUser, getSessionUser } from "@/lib/auth";
 import { isClerkConfigured } from "@/lib/clerk";
 
@@ -32,7 +33,7 @@ export default async function LoginPage({
   return (
     <div className="mx-auto w-full max-w-lg overflow-hidden px-margin-mobile py-space-2xl md:px-0">
       <div className="text-center">
-        <span className="material-symbols-outlined text-[30px] text-secondary">flare</span>
+        <BrandMark className="mx-auto block h-11 w-11 text-on-surface" accentClassName="text-secondary" />
         <h1 className="mt-2 font-display text-display-sm-mobile text-on-surface md:text-display-sm">
           Patron Sign In
         </h1>

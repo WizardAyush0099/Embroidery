@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
+import { BrandMark } from "@/components/site/BrandMark";
 import { signOut } from "@/lib/actions/auth";
 
 const navItems = [
@@ -47,7 +48,7 @@ export function AdminShell({
         <div className="border-b border-white/10 px-space-md py-space-md">
           <div className="flex items-center justify-between">
             <Link href="/admin" className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-[24px] text-[#c2a267]">flare</span>
+              <BrandMark className="h-7 w-7 text-[#f3f0e9]" accentClassName="text-[#c2a267]" />
               <span className="font-display text-[19px] uppercase leading-none tracking-[0.14em]">
                 {brandName}
               </span>

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { isSupabaseConfigured } from "@/lib/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Category, Product, StoreSettings } from "@/lib/types";
@@ -8,7 +9,7 @@ export const defaultSettings: StoreSettings = {
   id: 1,
   brand_name: "Atelier Brodé",
   contact_email: "concierge@atelierbrode.in",
-  contact_phone: "+91 98200 00000",
+  contact_phone: "+91 83530 11030",
   address: "Atelier House, Kala Ghoda, Mumbai 400001, India",
   instagram: "@atelierbrode",
   shipping_fee: 250,
@@ -251,7 +252,8 @@ export async function getProductsForFilters(): Promise<{ sizes: string[]; colors
   }
 }
 
-export async function getCategories(): Promise<Category[]> {
+/** Wrapped in React cache so a layout and its page share one Supabase round trip. */
+export const getCategories = cache(async function getCategories(): Promise<Category[]> {
   if (!isSupabaseConfigured) return [];
   try {
     const supabase = await createSupabaseServerClient();
@@ -265,7 +267,7 @@ export async function getCategories(): Promise<Category[]> {
     console.error("getCategories failed", error);
     return [];
   }
-}
+});
 
 export async function getCategoryCounts(): Promise<Record<string, number>> {
   if (!isSupabaseConfigured) return {};
@@ -286,7 +288,8 @@ export async function getCategoryCounts(): Promise<Record<string, number>> {
   }
 }
 
-export async function getStoreSettings(): Promise<StoreSettings> {
+/** Cached per request: the header, footer and page all need the same settings row. */
+export const getStoreSettings = cache(async function getStoreSettings(): Promise<StoreSettings> {
   if (!isSupabaseConfigured) return defaultSettings;
   try {
     const supabase = await createSupabaseServerClient();
@@ -306,6 +309,22 @@ export async function getStoreSettings(): Promise<StoreSettings> {
     };
   } catch {
     return defaultSettings;
+  }
+});
+
+/** Head-only count, so the storefront never streams the whole catalogue just for a number. */
+export async function getProductCount(): Promise<number> {
+  if (!isSupabaseConfigured) return 0;
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { count, error } = await supabase
+      .from("products")
+      .select("id", { count: "exact", head: true })
+      .eq("is_published", true);
+    if (error) throw error;
+    return count ?? 0;
+  } catch {
+    return 0;
   }
 }
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getStoreSettings } from "@/lib/catalog";
+import { STUDIO_PHONE_DISPLAY, STUDIO_PHONE_TEL, whatsAppUrlFromPhone } from "@/lib/contact";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 export default async function ContactPage() {
   const settings = await getStoreSettings();
   const instagramHandle = settings.instagram?.replace(/^@/, "");
-  const whatsappNumber = settings.contact_phone.replace(/[^\d]/g, "");
+  const whatsappLink = whatsAppUrlFromPhone(settings.contact_phone);
 
   return (
     <div className="mx-auto w-full max-w-[1440px] px-margin-mobile py-space-xl md:px-margin-tablet lg:px-margin">
@@ -38,7 +39,7 @@ export default async function ContactPage() {
               </div>
               <span className="material-symbols-outlined text-[20px] text-outline group-hover:text-secondary">arrow_outward</span>
             </a>
-            <a href={`tel:${settings.contact_phone.replace(/\s/g, "")}`} className="group flex items-center justify-between gap-3 py-space-md">
+            <a href={`tel:${STUDIO_PHONE_TEL}`} className="group flex items-center justify-between gap-3 py-space-md">
               <div>
                 <p className="font-label-sm text-[10px] uppercase tracking-wider text-outline">Telephone</p>
                 <p className="mt-0.5 font-body-md text-body-md text-on-surface group-hover:text-secondary">
@@ -47,22 +48,20 @@ export default async function ContactPage() {
               </div>
               <span className="material-symbols-outlined text-[20px] text-outline group-hover:text-secondary">arrow_outward</span>
             </a>
-            {whatsappNumber && (
-              <a
-                href={`https://wa.me/${whatsappNumber}`}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="group flex items-center justify-between gap-3 py-space-md"
-              >
-                <div>
-                  <p className="font-label-sm text-[10px] uppercase tracking-wider text-outline">WhatsApp</p>
-                  <p className="mt-0.5 font-body-md text-body-md text-on-surface group-hover:text-secondary">
-                    Message the concierge
-                  </p>
-                </div>
-                <span className="material-symbols-outlined text-[20px] text-outline group-hover:text-secondary">arrow_outward</span>
-              </a>
-            )}
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="group flex items-center justify-between gap-3 py-space-md"
+            >
+              <div>
+                <p className="font-label-sm text-[10px] uppercase tracking-wider text-outline">WhatsApp</p>
+                <p className="mt-0.5 font-body-md text-body-md text-on-surface group-hover:text-secondary">
+                  Message the studio · {STUDIO_PHONE_DISPLAY}
+                </p>
+              </div>
+              <span className="material-symbols-outlined text-[20px] text-outline group-hover:text-secondary">arrow_outward</span>
+            </a>
             {instagramHandle && (
               <a
                 href={`https://instagram.com/${instagramHandle}`}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { BrandMark } from "@/components/site/BrandMark";
 import { getAdminUser } from "@/lib/auth";
 import { isClerkConfigured } from "@/lib/clerk";
 
@@ -21,7 +22,7 @@ export default async function AdminLoginPage() {
       <div className="hidden flex-col justify-between bg-[#1c1b1a] p-space-xl text-[#f3f0e9] lg:flex">
         <div>
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[26px] text-[#c2a267]">flare</span>
+            <BrandMark className="h-7 w-7 text-[#f3f0e9]" accentClassName="text-[#c2a267]" />
             <span className="font-display text-[20px] uppercase tracking-[0.16em]">Atelier Brodé</span>
           </div>
           <p className="mt-2 font-label-sm text-[9px] uppercase tracking-[0.2em] text-white/35">

@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { BrandMark } from "@/components/site/BrandMark";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
+import { STUDIO_PHONE_TEL, whatsAppUrlFromPhone } from "@/lib/contact";
 import type { Category, StoreSettings } from "@/lib/types";
 
 export function Footer({ settings, categories }: { settings: StoreSettings; categories: Category[] }) {
@@ -10,7 +12,7 @@ export function Footer({ settings, categories }: { settings: StoreSettings; cate
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-gutter px-margin-mobile py-space-2xl md:grid-cols-2 md:px-margin-tablet lg:grid-cols-12 lg:px-margin">
         <div className="lg:col-span-4">
           <div className="mb-space-md flex items-center gap-2">
-            <span className="material-symbols-outlined text-[24px] text-secondary">flare</span>
+            <BrandMark className="h-7 w-7 text-on-surface" accentClassName="text-secondary" />
             <span className="font-display text-[20px] uppercase leading-none tracking-[0.16em]">
               {settings.brand_name}
             </span>
@@ -103,10 +105,22 @@ export function Footer({ settings, categories }: { settings: StoreSettings; cate
             <span className="material-symbols-outlined text-[15px]">location_on</span>
             {settings.address}
           </p>
-          <p className="flex items-center gap-2">
+          <a
+            href={`tel:${STUDIO_PHONE_TEL}`}
+            className="flex items-center gap-2 transition-colors hover:text-secondary"
+          >
             <span className="material-symbols-outlined text-[15px]">call</span>
             {settings.contact_phone}
-          </p>
+          </a>
+          <a
+            href={whatsAppUrlFromPhone(settings.contact_phone)}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="flex items-center gap-2 transition-colors hover:text-secondary"
+          >
+            <span className="material-symbols-outlined text-[15px]">chat</span>
+            WhatsApp
+          </a>
         </div>
       </div>
     </footer>
